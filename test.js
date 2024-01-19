@@ -1,0 +1,15 @@
+$.ajax({
+    url:'InterFace.do?method=login',
+    method:'POST',
+    data:{
+        userId:'uid',
+        password:'pwd',
+        service:'LT',
+        queryString:'qstr',
+        passwordEncrypt:false,
+        operatorPwd:'',
+        operatorUserId:'',
+        validcode:''
+    },
+    success:(e)=>{console.log(e)}
+})
