@@ -2,7 +2,7 @@ import requests
 # import urllib.parse
 import json
 
-f=open('config.json')
+f=open('./config.json')
 conf=json.load(f)
 f.close
 
