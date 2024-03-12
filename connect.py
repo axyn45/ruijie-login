@@ -16,7 +16,7 @@ session=requests.Session()
 r=session.get(url=url,headers=headers,allow_redirects=False)
 headers["Cookie"]="JSESSIONID="+r.cookies.get_dict()["JSESSIONID"]
 
-while r.status_code>300:
+while r.status_code>299 and r.status_code<400:
     r=session.get(url=r.next.url,headers=headers)
 print(r.text)
 
