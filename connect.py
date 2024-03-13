@@ -1,6 +1,29 @@
 import requests
-# import urllib.parse
 import json
+
+def connect(url,headers):
+    session=requests.Session()
+    rs=session.get(url=url,headers=headers,allow_redirects=False)
+    headers["Cookie"]="JSESSIONID="+rs.cookies.get_dict()["JSESSIONID"]
+
+    while rs.status_code>299 and rs.status_code<400:
+        rs=session.get(url=rs.next.url,headers=headers)
+
+    res=rs.text.split('?')[1].split("'")[0].split('"')[0]
+    queryString=res
+
+    userId=conf['uid']
+    password=conf['pwd']
+    service=conf['service']        # LT YD DX XYW
+    operatorPwd=''
+    operatorUserId=''
+    validcode=''
+    passwordEncrypt=False
+
+    data={'userId':userId,'password':password,'service':service,'queryString':queryString,'operatorPwd':operatorPwd,'operatorUserId':operatorUserId,'validcode':validcode,'passwordEncrypt':passwordEncrypt}
+    x=requests.post(url=url+'/eportal/InterFace.do?method=login',headers=headers,data=data)
+    print(str(x.content,'utf-8'))
+
 
 f=open('./config.json')
 conf=json.load(f)
@@ -12,28 +35,13 @@ headers={"Content-Type":"application/x-www-form-urlencoded; charset=UTF-8",
          "Dnt":"1",
          }
 url=conf['url']
-session=requests.Session()
-r=session.get(url=url,headers=headers,allow_redirects=False)
-headers["Cookie"]="JSESSIONID="+r.cookies.get_dict()["JSESSIONID"]
 
-while r.status_code>299 and r.status_code<400:
-    r=session.get(url=r.next.url,headers=headers)
-print(r.text)
+r=requests.get(url+"/eportal/InterFace.do?method=getOnlineUserInfo",headers=headers).text
+connection_status=json.loads(r)['isSuccessService']
 
-res=r.text.split('?')[1].split("'")[0].split('"')[0]
-queryString=res
-
-userId=conf['uid']
-password=conf['pwd']
-service=conf['service']        # LT YD DX XYW
-
-operatorPwd=''
-operatorUserId=''
-validcode=''
-passwordEncrypt=False
-
-data={'userId':userId,'password':password,'service':service,'queryString':queryString,'operatorPwd':operatorPwd,'operatorUserId':operatorUserId,'validcode':validcode,'passwordEncrypt':passwordEncrypt}
-# print(data)
-x=requests.post(url=url+'/eportal/InterFace.do?method=login',headers=headers,data=data)
-print(str(x.content,'utf-8'))
+if(connection_status!="true"):
+    connect(url,headers)
+    print("Successfully Connected")
+else:
+    print("Already Connected")
 
