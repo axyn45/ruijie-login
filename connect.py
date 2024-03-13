@@ -45,3 +45,4 @@ if(connection_status!="true"):
 else:
     print("Already Connected")
 
+# */2 * * * * cd /root/autoconnect && ./connect.sh > ./run.log 2>&1
