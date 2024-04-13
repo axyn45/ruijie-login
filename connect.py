@@ -19,10 +19,17 @@ def connect(url,headers):
     operatorUserId=''
     validcode=''
     passwordEncrypt=False
-
-    data={'userId':userId,'password':password,'service':service,'queryString':queryString,'operatorPwd':operatorPwd,'operatorUserId':operatorUserId,'validcode':validcode,'passwordEncrypt':passwordEncrypt}
-    x=requests.post(url=url+'/eportal/InterFace.do?method=login',headers=headers,data=data)
-    print(str(x.content,'utf-8'))
+    def doConnection():
+        data={'userId':userId,'password':password,'service':service,'queryString':queryString,'operatorPwd':operatorPwd,'operatorUserId':operatorUserId,'validcode':validcode,'passwordEncrypt':passwordEncrypt}
+        return json.loads(str(requests.post(url=url+'/eportal/InterFace.do?method=login',headers=headers,data=data).content,'utf-8'))
+    response=doConnection()
+    print("Connection "+response["result"])
+    if(response["result"]!="success"):
+        userId=conf['uid2']
+        password=conf['pwd2']
+        service=conf['service2']
+        response=doConnection()
+        print("Backup Connection "+response["result"])
 
 
 f=open('./config.json')
@@ -41,7 +48,7 @@ connection_status=json.loads(r)['isSuccessService']
 
 if(connection_status!="true"):
     connect(url,headers)
-    print("Successfully Connected")
+    # print("Successfully Connected")
 else:
     print("Already Connected")
 
